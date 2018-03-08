@@ -67,10 +67,10 @@ def on_epoch_end(epoch, logs):
     # Function invoked at end of each epoch. Prints generated text. Also saves model.
     if epoch % 50 == 0 and epoch != 0:
         model.save("trained_model_complete_%d.h5" % (epoch,))
-    else:
-        model.save("trained_model_weights_%d.h5" % (epoch,))
 
+    model.save("trained_model_weights_%d.h5" % (epoch,))
     print("Saved model.")
+
     print()
     print('----- Generating text after Epoch: %d -----' % epoch)
 
