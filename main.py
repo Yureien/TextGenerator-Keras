@@ -80,7 +80,7 @@ def on_epoch_end(epoch, logs):
     generated += sentence
     print('----- Generating with seed: "' + sentence.replace("\n", "\\n") + '" -----')
     print()
-    sys.stdout.write(generated.replace("\n", "\\n"))
+    sys.stdout.write(generated)
 
     for i in range(400):
         x_pred = np.zeros((1, maxlen, len(chars)))
@@ -97,7 +97,7 @@ def on_epoch_end(epoch, logs):
         generated += next_char
         sentence = sentence[1:] + next_char
 
-        sys.stdout.write(next_char.replace("\n", "\\n"))
+        sys.stdout.write(next_char)
         sys.stdout.flush()
     print()
 
