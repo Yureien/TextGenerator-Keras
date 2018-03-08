@@ -2,6 +2,8 @@
 
 This RNN feeds on a txt document (usually a book, recommended >500 KB) and then, after sufficient training (usually ~~a day (thanks, my laptop)~~ 10 epoches for humane sounding words and 50 epoches for actually meaningful sentences), it will spew out random sentences, based on a random seed.
 
+The default training dataset, `training_data.txt`, is a mixture of Harry Potter - Prisoner of Azkaban and Alice in Wonderland.
+
 Sorry, I know this README is vague and sounds weird. I will update it later; busy with exams now.
 
 #### Python3.6, Keras 2, Tensorflow 1.6 used.
