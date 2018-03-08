@@ -12,6 +12,7 @@ Sorry, I know this README is vague and sounds weird. I will update it later; bus
 
 You need NumPY and Keras and Tensorflow installed. If you are a normal human who breaks under torture, I recommend using Tensorflow **only with GPU**.
 
+#### I recommend not following below method. I installed via my OS'es package manager, as it had customized version of Tensorflow with GPU and CPU optimizations. (I belong to the Arch Linux masterrace). Install these your own way.
 To install them, run (sorry, only for Linux (and maybe, Mac) users) -
 ```
 pip install --user --upgrade numpy keras h5py tensorflow-gpu # Recommended, requires GPU.
