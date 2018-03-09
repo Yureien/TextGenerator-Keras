@@ -34,7 +34,7 @@ Just run `python train.py`.
 Use `python train.py -h` for help. Output of that command -
 ```
 usage: train.py [-h] [-data DATA] [-weights WEIGHTS] [-randomness RANDOMNESS]
-                [-epochs EPOCHS]
+                [-epochs EPOCHS] [-batch_size BATCH_SIZE]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -43,8 +43,8 @@ optional arguments:
                         Default: "training_data.txt"
 
   -weights WEIGHTS      If you want to resume from a trained weight, add the
-                        path to the h5 weight here.
-			The weights are automatically saved each epoch.
+                        path to the h5 weight here. The weights are
+                        automatically saved each epoch.
 
   -randomness RANDOMNESS
                         The exponential factor determining the predicted
@@ -53,4 +53,9 @@ optional arguments:
 
   -epochs EPOCHS        Number of epoches to do. I recommend >50 atleast.
                         Default: 200
+
+  -batch_size BATCH_SIZE
+                        Batch size. If you get a OutOfMemory error, reduce the
+                        batch size. On big memory GPUs, you can increase this,
+                        but not by much. Default: 128
 ```

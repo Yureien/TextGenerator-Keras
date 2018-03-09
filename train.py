@@ -21,6 +21,9 @@ parser.add_argument('-randomness', type=float, default=0.2,
                     to be chosen. Do not change unless you know what you're doing. Default: 0.2''')
 parser.add_argument('-epochs', type=int, default=200,
                     help='''Number of epoches to do. I recommend >50 atleast. Default: 200''')
+parser.add_argument('-batch_size', type=int, default=128,
+                    help='''Batch size. If you get a OutOfMemory error, reduce the batch size.
+                    On big memory GPUs, you can increase this, but not by much. Default: 128''')
 args = vars(parser.parse_args())
 
 path = args['data']
@@ -104,6 +107,6 @@ print_callback = LambdaCallback(on_epoch_end=on_epoch_end)
 if args['weights'] != "":
     model.load_weights(args['weights'])
 model.fit(x, y,
-          batch_size=128,
+          batch_size=args['batch_size'],
           epochs=args['epochs'],
           callbacks=[print_callback])
