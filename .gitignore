@@ -103,3 +103,6 @@ ENV/
 # custom
 *~
 trained_model*.h5
+weights-old/
+.floydexpt
+.floydignore
