@@ -6,6 +6,7 @@ from keras.layers import LSTM
 import numpy as np
 import random
 import sys
+import os
 import io
 import argparse
 
@@ -24,7 +25,13 @@ parser.add_argument('-epochs', type=int, default=200,
 parser.add_argument('-batch_size', type=int, default=128,
                     help='''Batch size. If you get a OutOfMemory error, reduce the batch size.
                     On big memory GPUs, you can increase this, but not by much. Default: 128''')
+parser.add_argument('-save_dir', default='weights',
+                    help='''Directory where to save the weights. Default: weights''')
 args = vars(parser.parse_args())
+
+save_path = args['save_dir']
+if not os.path.exists(save_path) or not os.path.isdir(save_path):
+    os.makedirs(save_path)
 
 path = args['data']
 with io.open(path, encoding='utf-8') as f:
@@ -66,10 +73,7 @@ model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
 
 def on_epoch_end(epoch, logs):
     # Function invoked at end of each epoch. Prints generated text. Also saves model.
-    if epoch % 50 == 0 and epoch != 0:
-        model.save("trained_model_complete_%d.h5" % (epoch,))
-
-    model.save("trained_model_weights_%d.h5" % (epoch,))
+    model.save(os.path.join(save_path, "trained_model_weights_%d.h5" % (epoch,)))
     print("Saved model.")
 
     print()

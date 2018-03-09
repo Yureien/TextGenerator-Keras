@@ -34,7 +34,7 @@ Just run `python train.py`.
 Use `python train.py -h` for help. Output of that command -
 ```
 usage: train.py [-h] [-data DATA] [-weights WEIGHTS] [-randomness RANDOMNESS]
-                [-epochs EPOCHS] [-batch_size BATCH_SIZE]
+                [-epochs EPOCHS] [-batch_size BATCH_SIZE] [-save_dir SAVE_DIR]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -58,4 +58,6 @@ optional arguments:
                         Batch size. If you get a OutOfMemory error, reduce the
                         batch size. On big memory GPUs, you can increase this,
                         but not by much. Default: 128
+
+  -save_dir SAVE_DIR    Directory where to save the weights. Default: weights
 ```
