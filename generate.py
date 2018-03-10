@@ -1,5 +1,3 @@
-from __future__ import print_function
-from keras.callbacks import LambdaCallback
 from keras.models import Sequential
 from keras.layers import Dense, Activation
 from keras.layers import LSTM
@@ -11,35 +9,32 @@ import io
 import argparse
 
 parser = argparse.ArgumentParser()
+parser.add_argument('weights',
+                    help='''Path to the weights that were either pretrained or
+                    generated with train.py.''')
 parser.add_argument('-data', default='training_data.txt',
-                    help='''Dataset to use for training. Recommended size >500KB.
+                    help='''Dataset to use for generating words. Should be same as one used for training.
                     Default: "training_data.txt"''')
-parser.add_argument('-weights', default='',
-                    help='''If you want to resume from a trained weight, add the path to
-                    the h5 weight here. The weights are automatically saved each epoch.''')
 parser.add_argument('-randomness', type=float, default=0.05,
                     help='''The exponential factor determining the predicted character
                     to be chosen. Do not change unless you know what you're doing. Default: 0.05''')
-parser.add_argument('-epochs', type=int, default=200,
-                    help='''Number of epoches to do. I recommend >50 atleast. Default: 200''')
-parser.add_argument('-batch_size', type=int, default=128,
-                    help='''Batch size. If you get a OutOfMemory error, reduce the batch size.
-                    On big memory GPUs, you can increase this, but not by much. Default: 128''')
-parser.add_argument('-save_dir', default='weights',
-                    help='''Directory where to save the weights. Default: weights''')
+parser.add_argument('-length', type=int, default=500,
+                    help='''Length of text to generate. Default: 500''')
+parser.add_argument('-out_file', default='output.txt',
+                    help='''Generated output. Default: "output.txt"''')
+parser.add_argument('-seed', default='',
+                    help='''Seed to use to generate the text.
+                    Default: Chooses random text from the dataset.''')
 args = vars(parser.parse_args())
 
-save_path = args['save_dir']
-if not os.path.exists(save_path) or not os.path.isdir(save_path):
-    os.makedirs(save_path)
+if not os.path.isfile(args['weights']):
+    print("Weights file not found!")
 
 path = args['data']
 with io.open(path, encoding='utf-8') as f:
     text = f.read()
-print('corpus length:', len(text))
 
 chars = sorted(list(set(text)))
-print('total chars:', len(chars))
 char_indices = dict((c, i) for i, c in enumerate(chars))
 indices_char = dict((i, c) for i, c in enumerate(chars))
 
@@ -69,25 +64,20 @@ model.add(LSTM(128))
 model.add(Dense(len(chars)))
 model.add(Activation('softmax'))
 model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
+model.load_weights(args['weights'])
 
 
-def on_epoch_end(epoch, logs):
-    # Function invoked at end of each epoch. Prints generated text. Also saves model.
-    model.save(os.path.join(save_path, "trained_model_weights_%d.h5" % (epoch,)))
-    print("Saved model.")
-
-    print()
-    print('----- Generating text after Epoch: %d -----' % epoch)
-
-    start_index = random.randint(0, len(text) - maxlen - 1)
-    generated = ''
-    sentence = text[start_index: start_index + maxlen]
-    generated += sentence
-    print('----- Generating with seed: "' + sentence.replace("\n", "\\n") + '" -----')
-    print()
+start_index = random.randint(0, len(text) - maxlen - 1)
+generated = ''
+sentence = args['seed']
+if sentence == '' or len(sentence) != 40:
+    sentence = text[start_index: start_index + maxlen - 20]
+generated += sentence
+print('\n----- Generating with seed: "' + sentence.replace("\n", "\\n") + '" -----\n\n')
+with open(args['out_file'], 'w') as f:
     sys.stdout.write(generated)
-
-    for i in range(400):
+    f.write(generated)
+    for i in range(args['length']):
         x_pred = np.zeros((1, maxlen, len(chars)))
         for t, char in enumerate(sentence):
             x_pred[0, t, char_indices[char]] = 1.
@@ -103,14 +93,11 @@ def on_epoch_end(epoch, logs):
         sentence = sentence[1:] + next_char
 
         sys.stdout.write(next_char)
+        f.write(next_char)
         sys.stdout.flush()
-    print()
-
-
-print_callback = LambdaCallback(on_epoch_end=on_epoch_end)
-if args['weights'] != "":
-    model.load_weights(args['weights'])
-model.fit(x, y,
-          batch_size=args['batch_size'],
-          epochs=args['epochs'],
-          callbacks=[print_callback])
+        f.flush()
+    f.write('\n')
+    f.flush()
+print()
+print('----- DONE -----')
+print("Written output to:", args['out_file'])
